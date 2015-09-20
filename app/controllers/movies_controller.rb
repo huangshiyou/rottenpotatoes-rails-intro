@@ -11,7 +11,7 @@ class MoviesController < ApplicationController
   end
 
   def index
-    sort = params[:sort] 
+    sort = params[:sort] || session[:sort]
     
     #handle sorting and highlight
     case sort
@@ -25,7 +25,20 @@ class MoviesController < ApplicationController
 
     #handle ratings
     @all_ratings = Movie.all.select('rating').distinct
-    @selected_ratings = params[:ratings] || {}
+    @selected_ratings = params[:ratings] || session[:ratings] || {}
+
+    if session[:sort] != params[:sort]
+      session[:sort] = params[:sort]
+      flash.keep
+      redirect_to :sort=>sort, :ratings=> @selected_ratings and return
+    end
+
+    if params[:ratings] != session[:ratings] and @selected_ratings != {}
+      session[:sort] = sort
+      session[:ratings] = @selected_ratings
+      flash.keep
+      redirect_to :sort => sort, :ratings => @selected_ratings and return
+    end
     
     @selected_ratings_keys = []
     if @selected_ratings != {}
