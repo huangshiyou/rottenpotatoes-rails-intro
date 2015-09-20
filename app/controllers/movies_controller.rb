@@ -12,18 +12,29 @@ class MoviesController < ApplicationController
 
   def index
     sort = params[:sort] 
+    
+    #handle sorting and highlight
     case sort
     when 'title'
-      #ordering, @title_header = {:order => :title}, 'hilite'
       key = 'title'
       @title_header = 'hilite'
     when 'release_date'
-      #ordering, @date_header = {:order => :release_date}, 'hilite'
       key = 'release_date'   
-      @date_header = 'hilite' 
+      @release_date_header = 'hilite' 
     end
-    #@movies = Movie.order('title').all
-    @movies = Movie.order(key).all
+
+    #handle ratings
+    @all_ratings = Movie.all.select('rating').distinct
+    @selected_ratings = params[:ratings] || {}
+    
+    @selected_ratings_keys = []
+    if @selected_ratings != {}
+      @selected_ratings_keys = @selected_ratings.keys
+      @movies = Movie.where(rating:@selected_ratings_keys).order(key)
+  
+    else
+      @movies = Movie.order(key).all
+    end
   end
 
   def new
