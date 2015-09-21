@@ -24,7 +24,13 @@ class MoviesController < ApplicationController
     end
 
     #handle ratings
-    @all_ratings = Movie.all.select('rating').distinct
+    @all_ratings = []
+    all_ratings_tuples = Movie.all.select('rating').distinct.to_a
+    
+    all_ratings_tuples.each do |tuple|
+      @all_ratings << tuple.rating
+    end
+      
     @selected_ratings = params[:ratings] || session[:ratings] || {}
 
     if session[:sort] != params[:sort]
@@ -34,10 +40,10 @@ class MoviesController < ApplicationController
     end
 
     if params[:ratings] != session[:ratings] and @selected_ratings != {}
-      session[:sort] = sort
+      #session[:sort] = sort
       session[:ratings] = @selected_ratings
-      flash.keep
-      redirect_to :sort => sort, :ratings => @selected_ratings and return
+      #flash.keep
+      #redirect_to :sort => sort, :ratings => @selected_ratings and return
     end
     
     @selected_ratings_keys = []
