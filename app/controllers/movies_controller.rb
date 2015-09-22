@@ -35,8 +35,8 @@ class MoviesController < ApplicationController
       
     @selected_ratings = params[:ratings] || session[:ratings] || {}
 
-    if session[:sort] != params[:sort]
-      session[:sort] = params[:sort]
+    if session[:sort] != params[:sort]  #get new parameter
+      session[:sort] = params[:sort]   #update session
       flash.keep
       redirect_to :sort=>sort, :ratings=> @selected_ratings and return
     end
